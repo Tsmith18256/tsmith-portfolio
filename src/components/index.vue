@@ -1,17 +1,76 @@
 <template>
   <div>
     <header class="header">
-      <h1 class="title">Tyler Smith:</h1>
-      <h1 class="title">Full Stack</h1>
-      <h1 class="title">Developer</h1>
+      <h1 class="title" v-bind:class="titleRow1.cursorClass">{{titleRow1.value}}</h1>
+      <h1 class="title" v-bind:class="titleRow2.cursorClass">{{titleRow2.value}}</h1>
+      <h1 class="title" v-bind:class="titleRow3.cursorClass">{{titleRow3.value}}</h1>
     </header>
   </div>
 </template>
 
 <script>
+const CURSOR_CLASS = 'title-with-cursor';
+const BLINKING_CURSOR_CLASS = 'title-with-blinking-cursor';
+
 export default {
-  name: 'index'
-}
+  name: 'index',
+
+  data: function() {
+    return {
+      titleRow1: { value: '', cursorClass: CURSOR_CLASS },
+      titleRow2: { value: '', cursorClass: '' },
+      titleRow3: { value: '', cursorClass: '' }
+    }
+  },
+
+  created: function() {
+    const titleRowsToAnimate = [
+      {
+        rowKey: 'titleRow1',
+        currentValue: '',
+        finalValue: 'Tyler Smith:'
+      },
+      {
+        rowKey: 'titleRow2',
+        currentValue: '',
+        finalValue: 'Full Stack'
+      },
+      {
+        rowKey: 'titleRow3',
+        currentValue: '',
+        finalValue: 'Developer'
+      }
+    ];
+
+    this.animateTitleRows(titleRowsToAnimate);
+  },
+
+  methods: {
+    /* TODO: Look into Tween.js instead of this hacky solution */
+    animateTitleRows: function(titleRowsToAnimate) {
+      // slightly vary the time between "key strokes" to appear more realistic
+      const timeoutMs = Math.floor(Math.random() * 150) + 50;
+
+      setTimeout(() => {
+        const currentTitleRow = titleRowsToAnimate[0];
+        const nextCharIndex = currentTitleRow.currentValue.length;
+        currentTitleRow.currentValue += currentTitleRow.finalValue[nextCharIndex];
+        this[currentTitleRow.rowKey].value = currentTitleRow.currentValue;
+
+          if (currentTitleRow.currentValue !== currentTitleRow.finalValue) {
+            this.animateTitleRows(titleRowsToAnimate);
+          } else if (titleRowsToAnimate.length > 1) {
+            this[currentTitleRow.rowKey].cursorClass = '';
+            titleRowsToAnimate.shift();
+            this[titleRowsToAnimate[0].rowKey].cursorClass = CURSOR_CLASS;
+            this.animateTitleRows(titleRowsToAnimate);
+          } else {
+            this[currentTitleRow.rowKey].cursorClass = BLINKING_CURSOR_CLASS;
+          }
+      }, timeoutMs);
+    }
+  }
+};
 </script>
 
 <style scoped>
@@ -43,8 +102,26 @@ export default {
     color: var(--text-light-color);
   }
 
-  /* TODO: add PostCSS Nested plugin */
-  .title:last-of-type::after {
+  .title::before {
+    /* Forces the span to take it's line height up even when there is no content in it. */
+    content: "\200b";
+  }
+
+  .title-with-cursor::after {
+    content: '';
+    display: inline-block;
+
+    width: 1px;
+    height: 1em;
+
+    margin: 0.15em 0 0 0.1em;
+
+    vertical-align: top;
+
+    background-color: #AAA;
+  }
+
+  .title-with-blinking-cursor::after {
     content: '';
     display: inline-block;
 
