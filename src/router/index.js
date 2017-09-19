@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 
-import Index from '../components/Index.vue';
+import index from '../components/index.vue';
 
 Vue.use(Router);
 
@@ -10,7 +10,7 @@ export default new Router({
     {
       path: '/',
       name: 'Index',
-      component: Index
+      component: index
     }
   ]
 });

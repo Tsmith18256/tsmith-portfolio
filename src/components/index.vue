@@ -16,20 +16,26 @@ export default {
 
 <style scoped>
   .header {
+    --border-width: 1px;
+
     display: flex;
 
-    width: 100vw;
+    width: calc(100vw - (var(--border-width) * 2));
     height: 15rem;
 
-    padding: 0 2rem;
+    margin: var(--border-width) auto 0 auto;
 
     flex-direction: column;
     justify-content: center;
 
     background-color: var(--bg-dark-color);
+    border: solid 0.5rem #CCC;
+    box-shadow: 0 0 0 var(--border-width) black;
   }
 
   .title {
+    margin: 0 2rem;
+
     /* TODO: Add Source Sans Pro as a static resource */
     font: 2.5rem 'Source Code Pro';
     letter-spacing: -0.05rem;
